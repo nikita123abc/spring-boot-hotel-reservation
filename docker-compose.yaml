@@ -1,0 +1,36 @@
+version: "3.7"
+services:
+  mysqldb:
+    image: "mysql:8.0"
+    container_name: mysqldb
+    ports:
+      - 3307:3306
+    #    networks:
+    #      - springapimysql-net
+    environment:
+      MYSQL_DATABASE: hotelreservationapi
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+  api_service:
+    container_name: hotel-service-app 
+    build:
+        context: .                         
+        dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+#    networks:
+#      - springapimysql-net
+    environment:
+        SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/hotelreservationapi?createDatabaseIfNotExist=true
+        SPRING_DATASOURCE_USERNAME: root
+        SPRING_DATASOURCE_PASSWORD: root
+    depends_on:
+      - mysqldb
+    links:
+      - mysqldb:api_service
+    volumes:
+      - /var/lib/mysql
+
+
+#networks:
+#  springapimysql-net:
